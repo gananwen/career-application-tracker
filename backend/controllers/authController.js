@@ -1,17 +1,8 @@
-const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-
+const db = require('../config/db'); 
 dotenv.config();
-
-// Create Database Connection Pool (Better performance than single connection)
-const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-}).promise(); // Allows using "await"
 
 // REGISTER USER
 exports.register = async (req, res) => {
@@ -59,7 +50,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        // 3. Generate Token (The "Key" to enter the dashboard)
+        // 3. Generate Token
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ 
@@ -74,16 +65,15 @@ exports.login = async (req, res) => {
     }
 };
 
+// UPDATE PROFILE
 exports.updateProfile = async (req, res) => {
     try {
-        const userId = req.user.id; // From the token
+        const userId = req.user.id;
         const { username, email, newPassword } = req.body;
 
-        // 1. Prepare Query
         let query = 'UPDATE users SET username = ?, email = ?';
         let params = [username, email];
 
-        // 2. If Password provided, hash it and add to query
         if (newPassword) {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(newPassword, salt);
@@ -94,10 +84,9 @@ exports.updateProfile = async (req, res) => {
         query += ' WHERE id = ?';
         params.push(userId);
 
-        // 3. Execute
         await db.execute(query, params);
 
-        res.json({ message: 'Profile updated successfully!', username: username }); // Return new username
+        res.json({ message: 'Profile updated successfully!', username: username });
 
     } catch (error) {
         console.error(error);
@@ -105,7 +94,7 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-// GET USER INFO (To fill the form)
+// GET PROFILE
 exports.getProfile = async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT username, email FROM users WHERE id = ?', [req.user.id]);

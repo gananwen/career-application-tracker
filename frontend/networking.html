@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,154 +8,48 @@
     <link rel="stylesheet" href="css/styles.css">
     <style>
         /* Contact Cards Grid */
-        .contacts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+        .contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        .contact-card { 
+            background: white; border-radius: 12px; border: 1px solid var(--border); 
+            padding: 20px; position: relative; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .contact-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
+
+        .card-header-row { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        
+        .avatar { 
+            width: 45px; height: 45px; background: #F3F4F6; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; color: var(--dark); font-size: 18px; border: 1px solid #E5E7EB;
         }
 
-        .contact-card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 20px;
-            position: relative;
-            transition: transform 0.2s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-        }
+        .card-actions { display: flex; gap: 8px; }
+        .icon-btn { border: none; background: none; color: #9CA3AF; cursor: pointer; transition: color 0.2s; font-size: 14px; }
+        .icon-btn:hover { color: var(--dark); }
+        .icon-btn.delete:hover { color: #EF4444; }
 
-        .contact-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
-        }
+        .contact-name { font-weight: 700; color: var(--dark); font-size: 16px; margin-bottom: 2px; }
+        .contact-role { font-size: 13px; color: #6B7280; margin-bottom: 15px; display: block; }
 
-        .card-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-
-        .avatar {
-            width: 45px;
-            height: 45px;
-            background: #F3F4F6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: var(--dark);
-            font-size: 18px;
-            border: 1px solid #E5E7EB;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .icon-btn {
-            border: none;
-            background: none;
-            color: #9CA3AF;
-            cursor: pointer;
-            transition: color 0.2s;
-            font-size: 14px;
-        }
-
-        .icon-btn:hover {
-            color: var(--dark);
-        }
-
-        .icon-btn.delete:hover {
-            color: #EF4444;
-        }
-
-        .contact-name {
-            font-weight: 700;
-            color: var(--dark);
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-
-        .contact-role {
-            font-size: 13px;
-            color: #6B7280;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        .info-row i {
-            color: #9CA3AF;
-            width: 16px;
-            text-align: center;
-        }
-
-        .info-row a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
+        .info-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-main); margin-bottom: 8px; }
+        .info-row i { color: #9CA3AF; width: 16px; text-align: center; }
+        .info-row a { color: var(--primary); text-decoration: none; font-weight: 500; }
 
         .btn-email-now {
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin-top: 15px;
-            background: var(--light);
-            color: var(--dark);
-            border: 1px solid var(--border);
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
+            display: block; width: 100%; text-align: center; margin-top: 15px;
+            background: var(--light); color: var(--dark); border: 1px solid var(--border);
+            padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;
             transition: background 0.2s;
         }
-
-        .btn-email-now:hover {
-            background: #E5E7EB;
-        }
+        .btn-email-now:hover { background: #E5E7EB; }
 
         /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
-
 <body>
 
     <div class="sidebar">
@@ -166,6 +59,7 @@
             <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
             <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
             <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            
             <a href="#" class="active"><i class="fa-solid fa-address-book"></i> Networking</a>
             <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
 
@@ -175,9 +69,10 @@
             <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
             <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
         </div>
+        
+        <!-- Standardized Settings Link -->
         <div class="user-profile">
-            <a href="settings.html"
-                style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+            <a href="settings.html" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
                 <span><i class="fa-solid fa-gear"></i> Settings</span>
                 <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
             </a>
@@ -212,8 +107,9 @@
                     <input type="text" id="cRole" required placeholder="e.g. Recruiter at Google">
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="cEmail" placeholder="john@example.com">
+                    <label>Email <span style="color:red">*</span></label>
+                    <!-- ADDED REQUIRED ATTRIBUTE -->
+                    <input type="email" id="cEmail" required placeholder="john@example.com">
                 </div>
                 <div class="form-group">
                     <label>Last Contact Date</label>
@@ -245,7 +141,7 @@
 
             contacts.forEach((contact, index) => {
                 const initials = contact.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-
+                
                 const card = `
                     <div class="contact-card">
                         <div class="card-header-row">
@@ -259,7 +155,7 @@
                         
                         <div class="info-row">
                             <i class="fa-regular fa-envelope"></i>
-                            <a href="mailto:${contact.email}">${contact.email || 'No email'}</a>
+                            <a href="mailto:${contact.email}">${contact.email}</a>
                         </div>
                         <div class="info-row">
                             <i class="fa-regular fa-clock"></i>
@@ -278,10 +174,18 @@
         // Add Contact
         document.getElementById('contactForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            
+            const emailInput = document.getElementById('cEmail');
+            // Extra JS check for safety
+            if (!emailInput.value.trim()) {
+                alert("Email is required!");
+                return;
+            }
+
             const newContact = {
                 name: document.getElementById('cName').value,
                 role: document.getElementById('cRole').value,
-                email: document.getElementById('cEmail').value,
+                email: emailInput.value,
                 date: document.getElementById('cDate').value
             };
             contacts.push(newContact);
@@ -292,7 +196,7 @@
         });
 
         function deleteContact(index) {
-            if (confirm("Delete this contact?")) {
+            if(confirm("Delete this contact?")) {
                 contacts.splice(index, 1);
                 localStorage.setItem('career_contacts', JSON.stringify(contacts));
                 renderContacts();
@@ -306,5 +210,4 @@
         renderContacts();
     </script>
 </body>
-
 </html>
