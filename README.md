@@ -1,176 +1,152 @@
-🚀 CareerUp - Intelligent Career Application Tracker
+# 🚀 CareerUp – Intelligent Career Application Tracker
 
-A full-stack career management suite designed to help students track job applications, analyze interview probability, and manage networking connections.
+CareerUp is a full-stack career management platform designed to help students and job seekers track applications, analyze interview probability, and manage networking connections through data-driven insights and productivity tools.
 
-📖 Project Overview
+---
 
-CareerUp is more than just a spreadsheet replacement. It is a comprehensive Productivity Ecosystem built to solve the chaos of internship hunting. It moves beyond simple tracking by introducing predictive analytics, resume version control, and automated workflow tools to increase the conversion rate from Applied to Offer.
+## 📖 Project Overview
 
-🌟 Key Features
+CareerUp is more than a spreadsheet replacement.  
+It is a **Career Productivity Ecosystem** built to solve the chaos of internship and job hunting.
 
-🧠 Intelligent Dashboard
+Instead of only tracking applications, CareerUp introduces:
+- Predictive analytics
+- Resume version control
+- Automated workflow tools  
 
-Application Probability Predictor: A rule-based AI algorithm that calculates the likelihood of receiving an interview based on application freshness, effort (notes), and resume targeting.
+These features help users **increase their conversion rate from Applied → Interview → Offer**.
 
-Smart Alerts: Automated visual cues for:
+---
 
-⚠ Follow Up: Applications > 7 days old.
+## 🌟 Key Features
 
-👻 Ghosted: Applications > 30 days old without updates.
+### 🧠 Intelligent Dashboard
+- **Application Probability Predictor**  
+  Rule-based AI algorithm that estimates interview likelihood based on:
+  - Application freshness
+  - Resume targeting
+  - Notes and follow-up effort
 
-Analytics: Doughnut charts visualizing Success Rates and conversion metrics.
+- **Smart Alerts**
+  - ⚠ Follow Up: Applications older than 7 days
+  - 👻 Ghosted: Applications older than 30 days without updates
 
-🛠️ Career Toolkit (Power Features)
+- **Analytics**
+  - Doughnut charts for success rate & conversion metrics
 
-📄 Resume Version Control: Upload and tag specific PDF resumes (e.g., "Frontend V1", "Backend V2") and link them to specific job applications to track A/B performance.
+---
 
-📧 Email Architect: Auto-generates professional emails (Cold Outreach, Follow-ups, Thank You notes) with adjustable "Tone" settings.
+### 🛠 Career Toolkit (Power Features)
+- **📄 Resume Version Control**
+  - Upload and tag resumes (e.g. Frontend V1, Backend V2)
+  - Link resumes to applications
+  - Track resume performance (A/B testing)
 
-🔍 ATS Keyword Scanner: Analyzes job descriptions to extract high-frequency keywords for resume optimization.
+- **📧 Email Architect**
+  - Auto-generates professional emails
+  - Supports Cold Outreach, Follow-ups, Thank You notes
+  - Adjustable tone (Professional / Casual / Enthusiastic)
 
-⚖️ Offer Comparator: A weighted scoring engine to mathematically compare two job offers based on Salary, Commute, and Culture.
+- **🔍 ATS Keyword Scanner**
+  - Extracts high-frequency keywords from job descriptions
+  - Helps optimize resumes for ATS systems
 
-🎤 Interview Simulator: A built-in flashcard system with a timer to practice Behavioral and Technical questions.
+- **⚖️ Offer Comparator**
+  - Weighted scoring engine comparing offers by:
+    - Salary
+    - Commute
+    - Culture / Vibe score
 
-⚡ Workflow & Productivity
+- **🎤 Interview Simulator**
+  - Flashcard-based behavioral & technical questions
+  - Built-in timer for interview practice
 
-Kanban Board: Trello-style Drag-and-Drop interface for managing application status.
+---
 
-Interactive Calendar: Visual schedule of interviews and deadlines with Drag-and-Drop rescheduling and .ics export (Google Calendar sync).
+### ⚡ Workflow & Productivity
+- **Kanban Board**
+  - Trello-style drag-and-drop status management
 
-Networking Hub: A personal CRM to track recruiters and connections.
+- **Interactive Calendar**
+  - Visual scheduling of interviews and deadlines
+  - Drag-and-drop rescheduling
+  - `.ics` export (Google / Outlook calendar sync)
 
-Activity Audit Log: A chronological timeline tracking every user action for data integrity.
+- **Networking Hub**
+  - Personal CRM to track recruiters and connections
 
-🏗️ System Architecture
+- **Activity Audit Log**
+  - Immutable timeline of user actions for transparency and data integrity
 
-This project follows the MVC (Model-View-Controller) architectural pattern to ensure scalability and code maintainability.
+---
 
-1. Frontend (Client Layer)
+## 🏗 System Architecture
 
-Technologies: HTML5, CSS3 (Custom "Emerald" Design System), Vanilla JavaScript (ES6+).
+CareerUp follows the **MVC (Model–View–Controller)** architecture for scalability and maintainability.
 
-Design: Fully responsive grid layout with a standardized sidebar navigation.
+---
 
-State Management: Uses localStorage for session tokens and lightweight client-side data (Networking/Offer tools).
+### 1️⃣ Frontend (Client Layer)
+- **Technologies**:  
+  HTML5, CSS3 (Custom *Emerald Design System*), Vanilla JavaScript (ES6+)
+- **UI Design**:
+  - Responsive grid layout
+  - Standardized sidebar navigation
+- **State Management**:
+  - `localStorage` for session tokens
+  - Lightweight client-side state for productivity tools
 
-2. Backend (API Layer)
+---
 
-Runtime: Node.js with Express.js.
+### 2️⃣ Backend (API Layer)
+- **Runtime**: Node.js + Express.js
+- **Security**:
+  - JWT for stateless authentication
+  - Bcrypt for password hashing
+- **Middleware**:
+  - Protected routes via custom `authMiddleware`
+- **File Handling**:
+  - Multer for resume (PDF) uploads
 
-Security:
+---
 
-JWT (JSON Web Tokens): Stateless authentication mechanism.
+### 3️⃣ Database (Data Layer)
+- **Database**: MySQL (Relational)
 
-Bcrypt: Password hashing for security.
+**Schema Highlights**
+- `users` – authentication & profiles
+- `applications` – core tracking entity
+- `resumes` – linked resume versions
+- `activities` – immutable audit logs
 
-Middleware: Protected routes via custom authMiddleware.
+---
 
-File Handling: Multer for processing PDF resume uploads.
+## 🚀 Installation & Setup
 
-3. Database (Data Layer)
+### Prerequisites
+- Node.js (v14+)
+- MySQL (XAMPP / MySQL Workbench)
 
-System: MySQL (Relational Database).
+---
 
-Schema Highlights:
-
-users: Stores credentials.
-
-applications: The core table linked to users.
-
-resumes: Linked via Foreign Key to applications.
-
-activities: An immutable log of user actions.
-
-🚀 Installation & Setup
-
-Prerequisites
-
-Node.js (v14+)
-
-MySQL (via XAMPP or Workbench)
-
-Step 1: Clone & Install
-
-git clone [https://github.com/yourusername/career-tracker.git](https://github.com/yourusername/career-tracker.git)
-cd career-tracker/backend
+### Step 1: Clone & Install
+```bash
+git clone https://github.com/gananwen/career-application-tracker.git
+cd career-application-tracker/backend
 npm install
 
-
 Step 2: Database Setup
-
-Run the following SQL script in your MySQL interface:
-
+Run in MySQL:
 CREATE DATABASE career_tracker_db;
 USE career_tracker_db;
 
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE resumes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    name VARCHAR(100),
-    tag VARCHAR(50),
-    file_path VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE applications (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    resume_id INT,
-    company_name VARCHAR(100),
-    role VARCHAR(100),
-    status ENUM('Applied', 'Interview', 'Offer', 'Rejected'),
-    date_applied DATE,
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE SET NULL
-);
-
-CREATE TABLE activities (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    icon VARCHAR(50),
-    color VARCHAR(20),
-    description VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-
 Step 3: Configuration
+Create .env in backend/:
+...
 
-Create a .env file in the backend folder:
-
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=career_tracker_db
-PORT=5000
-JWT_SECRET=your_super_secret_key
-
-
-Step 4: Run
-
-# In the backend terminal
+Step 4: Run the Application
 npx nodemon server.js
 
+Open:
+frontend/login.html
 
-Then open frontend/login.html in your browser.
-
-👨‍💻 Engineering Decisions (For Interviewers)
-
-Why No Framework? I chose Vanilla JS for the frontend to demonstrate a deep understanding of the DOM, Event Loops, and Async/Await patterns without relying on React/Vue abstractions.
-
-Why MySQL? A relational database was chosen over MongoDB because application data is highly structured (Applications belong to Users, Resumes belong to Applications), making SQL JOINs and Foreign Keys the most efficient solution for data integrity.
-
-Scalability: The backend uses a centralized database configuration file (config/db.js) and a modular Controller-Service architecture, allowing the API to scale easily or be swapped for a microservices approach in the future.
