@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="#" class="active"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a>
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        <div class="user-profile">
+            <a href="settings.html"
+                style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Application Board</h1>
+            <p>Drag and drop cards to update your progress instantly.</p>
+        </div>
+
+        <div class="board">
+            <div class="column col-applied" ondragover="allowDrop(event)" ondrop="drop(event, 'Applied')">
+                <div class="column-header">Applied <span class="count-badge" id="count-Applied">0</span></div>
+                <div class="column-content" id="col-Applied"></div>
+            </div>
+            <div class="column col-interview" ondragover="allowDrop(event)" ondrop="drop(event, 'Interview')">
+                <div class="column-header">Interview <span class="count-badge" id="count-Interview">0</span></div>
+                <div class="column-content" id="col-Interview"></div>
+            </div>
+            <div class="column col-offer" ondragover="allowDrop(event)" ondrop="drop(event, 'Offer')">
+                <div class="column-header">Offer <span class="count-badge" id="count-Offer">0</span></div>
+                <div class="column-content" id="col-Offer"></div>
+            </div>
+            <div class="column col-rejected" ondragover="allowDrop(event)" ondrop="drop(event, 'Rejected')">
+                <div class="column-header">Rejected <span class="count-badge" id="count-Rejected">0</span></div>
+                <div class="column-content" id="col-Rejected"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = 'login.html';
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+
+        async function loadBoard() {
+            try {
+                const res = await fetch('http://localhost:5000/api/applications', { headers: { 'x-auth-token': token } });
+                const apps = await res.json();
+                ['Applied', 'Interview', 'Offer', 'Rejected'].forEach(status => {
+                    document.getElementById(`col-${status}`).innerHTML = '';
+                    document.getElementById(`count-${status}`).innerText = '0';
+                });
+                apps.forEach(app => {
+                    const card = createCard(app);
+                    const col = document.getElementById(`col-${app.status}`);
+                    if (col) col.appendChild(card);
+                });
+                ['Applied', 'Interview', 'Offer', 'Rejected'].forEach(status => {
+                    const count = document.getElementById(`col-${status}`).children.length;
+                    document.getElementById(`count-${status}`).innerText = count;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        function createCard(app) {
+            const div = document.createElement('div');
+            div.className = 'kanban-card';
+            div.draggable = true;
+            div.id = `card-${app.id}`;
+            const date = new Date(app.date_applied).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            div.innerHTML = `<span class="card-company">${app.company_name}</span><span class="card-role">${app.role}</span><div class="card-meta"><span><i class="fa-regular fa-clock"></i> ${date}</span><a href="edit-application.html?id=${app.id}" style="color:#3B82F6;"><i class="fa-solid fa-pen"></i></a></div>`;
+            div.addEventListener('dragstart', (e) => { e.dataTransfer.setData("text/plain", app.id); e.dataTransfer.setData("application", JSON.stringify(app)); setTimeout(() => div.classList.add('dragging'), 0); });
+            div.addEventListener('dragend', () => { div.classList.remove('dragging'); });
+            return div;
+        }
+
+        function allowDrop(e) { e.preventDefault(); }
+        async function drop(e, newStatus) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData("text/plain");
+            const appData = JSON.parse(e.dataTransfer.getData("application"));
+            const card = document.getElementById(`card-${id}`);
+            document.getElementById(`col-${newStatus}`).appendChild(card);
+            try {
+                const updatedData = { company_name: appData.company_name, role: appData.role, date_applied: appData.date_applied.split('T')[0], notes: appData.notes || "", status: newStatus };
+                await fetch(`http://localhost:5000/api/applications/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'x-auth-token': token }, body: JSON.stringify(updatedData) });
+                loadBoard();
+            } catch (err) { console.error("Update failed", err); loadBoard(); }
+        }
+        loadBoard();
+    </script>
+</body>
+
+</html>

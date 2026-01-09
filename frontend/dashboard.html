@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Career Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="#" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a> 
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a> 
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        
+        <div class="user-profile">
+            <a href="settings.html" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div><h1>Dashboard</h1><div class="date-display" id="currentDate">Loading...</div></div>
+            <div class="header-actions">
+                <button onclick="downloadCSV()" class="btn-secondary">Download Report</button>
+                <a href="add-application.html" class="btn-add">Add Application</a>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="card Applied"><h3 id="count-Applied">0</h3><p>Applied</p></div>
+            <div class="card Interview"><h3 id="count-Interview">0</h3><p>Interviews</p></div>
+            <div class="card Offer"><h3 id="count-Offer">0</h3><p>Offers</p></div>
+            <div class="card Rejected"><h3 id="count-Rejected">0</h3><p>Rejected</p></div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="section-card">
+                <div class="table-header">
+                    <div class="section-title">Recent Applications</div>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search company...">
+                        <select id="filterStatus" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="Applied">Applied</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Offer">Offer</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table id="appTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%">Company</th>
+                            <th style="width: 20%">Role</th>
+                            <th style="width: 15%">Date</th>
+                            <th style="width: 10%">Status</th>
+                            <th style="width: 10%">Probability</th> <!-- NEW COLUMN -->
+                            <th style="width: 10%; text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Success Rate</div>
+                <div style="position: relative; height: 200px; width: 100%;"><canvas id="statusChart"></canvas></div>
+                <div id="customLegend" class="chart-legend"></div>
+            </div>
+        </div>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

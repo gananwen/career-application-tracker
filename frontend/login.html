@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Career Tracker</title>
+    <style>
+        /* Reusing the same Slate & Blue Theme */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #F1F5F9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #1E293B; margin-bottom: 10px; }
+        p { color: #64748B; font-size: 14px; margin-bottom: 30px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; border: 1px solid #CBD5E1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #2563EB; outline: none; }
+        .btn-primary { background-color: #2563EB; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .btn-primary:hover { background-color: #1D4ED8; }
+        .link { color: #2563EB; text-decoration: none; font-size: 14px; }
+        .footer { margin-top: 20px; font-size: 13px; color: #64748B; }
+        #message { margin-bottom: 15px; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Welcome Back</h2>
+        <p>Login to manage your applications.</p>
+        <div id="message"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" required placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-primary">Login</button>
+        </form>
+        <div class="footer">
+            New here? <a href="register.html" class="link">Create an account</a>
+        </div>
+    </div>
+    <script src="js/login.js"></script>
+</body>
+</html>

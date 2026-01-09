@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Comparator - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Comparison Layout */
+        .comparison-wrapper {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .offer-col {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        /* Winner Style */
+        .offer-col.winner {
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .offer-col.winner .offer-header {
+            background: #ECFDF5;
+            color: #065F46;
+        }
+
+        .offer-header {
+            padding: 20px;
+            background: #F9FAFB;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .offer-header input {
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--dark);
+            background: transparent;
+            border: none;
+            width: 100%;
+        }
+
+        .offer-header input::placeholder {
+            color: #9CA3AF;
+        }
+
+        .offer-body {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .metric-group {
+            margin-bottom: 20px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #6B7280;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .score-display {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            padding: 20px;
+            background: #F3F4F6;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-compare {
+            margin: 20px auto;
+            display: block;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a>
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="#" class="active"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+
+        <div class="user-profile">
+            <a href="settings.html"
+                style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Offer Comparator</h1>
+                <p>Mathematically decide which job offer is better.</p>
+            </div>
+            <button onclick="calculateScores()" class="btn-add"><i class="fa-solid fa-calculator"></i> Calculate
+                Winner</button>
+        </div>
+
+        <div class="comparison-wrapper">
+            <!-- OFFER A -->
+            <div class="offer-col" id="col-a">
+                <div class="offer-header">
+                    <input type="text" placeholder="Company A (e.g. Google)">
+                </div>
+                <div class="offer-body">
+                    <div class="metric-group">
+                        <label class="metric-label">Base Salary ($)</label>
+                        <input type="number" id="salaryA" placeholder="0">
+                    </div>
+                    <div class="metric-group">
+                        <label class="metric-label">Annual Bonus / Stock ($)</label>
+                        <input type="number" id="bonusA" placeholder="0">
+                    </div>
+                    <div class="metric-group">
+                        <label class="metric-label">Commute (Minutes One-Way)</label>
+                        <input type="number" id="commuteA" placeholder="0">
+                    </div>
+                    <div class="metric-group">
+                        <label class="metric-label">Vibe Score (1-10)</label>
+                        <input type="number" id="vibeA" placeholder="5" max="10">
+                    </div>
+                </div>
+                <div class="score-display">Score: <span id="scoreA">0</span></div>
+            </div>
+
+            <!-- OFFER B -->
+            <div class="offer-col" id="col-b">
+                <div class="offer-header">
+                    <input type="text" placeholder="Company B (e.g. Startup)">
+                </div>
+                <div class="offer-body">
+                    <div class="metric-group">
+                        <label class="metric-label">Base Salary ($)</label>
+                        <input type="number" id="salaryB" placeholder="0">
+                    </div>
+                    <div class="metric-group">
+                        <label class="metric-label">Annual Bonus / Stock ($)</label>
+                        <input type="number" id="bonusB" placeholder="0">
+                    </div>
+                    <div class="metric-group">
+                        <label class="metric-label">Commute (Minutes One-Way)</label>
+                        <input type="number" id="commuteB" placeholder="0">
+                    </div>
+                    <div class="metric-group">
+                        <label class="metric-label">Vibe Score (1-10)</label>
+                        <input type="number" id="vibeB" placeholder="5" max="10">
+                    </div>
+                </div>
+                <div class="score-display">Score: <span id="scoreB">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+
+        function calculateScores() {
+            // Weights (Customize these logic if needed)
+            // Money = 1x, Commute = -200 per minute (time is money), Vibe = 2000 points per point
+
+            const getVal = (id) => Number(document.getElementById(id).value) || 0;
+
+            const scoreA = calculateOne(getVal('salaryA'), getVal('bonusA'), getVal('commuteA'), getVal('vibeA'));
+            const scoreB = calculateOne(getVal('salaryB'), getVal('bonusB'), getVal('commuteB'), getVal('vibeB'));
+
+            // Animate Score
+            animateValue("scoreA", 0, scoreA, 1000);
+            animateValue("scoreB", 0, scoreB, 1000);
+
+            // Highlight Winner
+            document.getElementById('col-a').classList.remove('winner');
+            document.getElementById('col-b').classList.remove('winner');
+
+            if (scoreA > scoreB) document.getElementById('col-a').classList.add('winner');
+            if (scoreB > scoreA) document.getElementById('col-b').classList.add('winner');
+        }
+
+        function calculateOne(salary, bonus, commute, vibe) {
+            // Formula: Total Comp - (Commute Mins * 200) + (Vibe * 2000)
+            // Example: 60k + 0 - (30 * 200 = 6000) + (8 * 2000 = 16000) = 70,000 pts
+            return Math.floor((salary + bonus) - (commute * 200) + (vibe * 2000));
+        }
+
+        function animateValue(id, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                document.getElementById(id).innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+
+</html>

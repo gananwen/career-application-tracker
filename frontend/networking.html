@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Hub - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Contact Cards Grid */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            position: relative;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: #F3F4F6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 18px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 14px;
+        }
+
+        .icon-btn:hover {
+            color: var(--dark);
+        }
+
+        .icon-btn.delete:hover {
+            color: #EF4444;
+        }
+
+        .contact-name {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .contact-role {
+            font-size: 13px;
+            color: #6B7280;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .info-row i {
+            color: #9CA3AF;
+            width: 16px;
+            text-align: center;
+        }
+
+        .info-row a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-email-now {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-email-now:hover {
+            background: #E5E7EB;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            <a href="#" class="active"><i class="fa-solid fa-address-book"></i> Networking</a>
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        <div class="user-profile">
+            <a href="settings.html"
+                style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Networking Hub</h1>
+                <p>Track recruiters and key connections.</p>
+            </div>
+            <button onclick="openModal()" class="btn-add"><i class="fa-solid fa-plus"></i> Add Contact</button>
+        </div>
+
+        <div id="contactsGrid" class="contacts-grid">
+            <!-- JS will populate cards here -->
+        </div>
+    </div>
+
+    <!-- ADD CONTACT MODAL -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top:0; color:var(--dark);">New Contact</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="cName" required placeholder="e.g. John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Role & Company</label>
+                    <input type="text" id="cRole" required placeholder="e.g. Recruiter at Google">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="cEmail" placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Last Contact Date</label>
+                    <input type="date" id="cDate">
+                </div>
+                <button type="submit" class="btn-submit" style="width:100%">Save Contact</button>
+                <button type="button" onclick="closeModal()" class="btn-cancel" style="width:100%">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+
+        // Load Contacts from LocalStorage
+        let contacts = JSON.parse(localStorage.getItem('career_contacts')) || [];
+
+        function renderContacts() {
+            const grid = document.getElementById('contactsGrid');
+            grid.innerHTML = '';
+
+            if (contacts.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #9CA3AF; padding: 50px;">
+                    <i class="fa-solid fa-users" style="font-size: 40px; margin-bottom: 10px;"></i><br>
+                    No contacts yet. Start building your network!
+                </div>`;
+                return;
+            }
+
+            contacts.forEach((contact, index) => {
+                const initials = contact.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+                const card = `
+                    <div class="contact-card">
+                        <div class="card-header-row">
+                            <div class="avatar">${initials}</div>
+                            <div class="card-actions">
+                                <button onclick="deleteContact(${index})" class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <div class="contact-name">${contact.name}</div>
+                        <span class="contact-role">${contact.role}</span>
+                        
+                        <div class="info-row">
+                            <i class="fa-regular fa-envelope"></i>
+                            <a href="mailto:${contact.email}">${contact.email || 'No email'}</a>
+                        </div>
+                        <div class="info-row">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>Last spoke: ${contact.date ? new Date(contact.date).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+
+                        <a href="mailto:${contact.email}" class="btn-email-now">
+                            <i class="fa-solid fa-paper-plane"></i> Send Email
+                        </a>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // Add Contact
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newContact = {
+                name: document.getElementById('cName').value,
+                role: document.getElementById('cRole').value,
+                email: document.getElementById('cEmail').value,
+                date: document.getElementById('cDate').value
+            };
+            contacts.push(newContact);
+            localStorage.setItem('career_contacts', JSON.stringify(contacts));
+            closeModal();
+            renderContacts();
+            e.target.reset();
+        });
+
+        function deleteContact(index) {
+            if (confirm("Delete this contact?")) {
+                contacts.splice(index, 1);
+                localStorage.setItem('career_contacts', JSON.stringify(contacts));
+                renderContacts();
+            }
+        }
+
+        // Modal Logic
+        function openModal() { document.getElementById('contactModal').classList.add('active'); }
+        function closeModal() { document.getElementById('contactModal').classList.remove('active'); }
+
+        renderContacts();
+    </script>
+</body>
+
+</html>

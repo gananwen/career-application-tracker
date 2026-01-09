@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+             <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a>
+            
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        <div class="user-profile">
+            <a href="settings.html" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content centered">
+        <div class="form-container">
+            <h2>Account Settings</h2>
+            <p style="color:#6B7280; margin-bottom:20px; font-size:14px;">Update your personal details or sign out.</p>
+            
+            <div id="message" style="display:none; padding:10px; border-radius:6px; margin-bottom:15px; font-size:13px; font-weight:600;"></div>
+
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password (Leave blank to keep current)</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-save">Save Changes</button>
+                <a href="dashboard.html" class="btn-cancel">Cancel</a>
+                
+                <!-- ADDED SIGN OUT BUTTON HERE -->
+                <button type="button" onclick="logout()" class="btn-cancel" style="width: 100%; margin-top: 10px; color: #EF4444; border-color: #FECACA;">Sign Out</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = 'login.html';
+        
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+
+        // 1. Load Current Data
+        async function loadProfile() {
+            try {
+                const res = await fetch('http://localhost:5000/api/auth/profile', {
+                    headers: { 'x-auth-token': token }
+                });
+                const user = await res.json();
+                document.getElementById('username').value = user.username;
+                document.getElementById('email').value = user.email;
+            } catch (err) { console.error(err); }
+        }
+
+        // 2. Update Data
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('message');
+            
+            const data = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                newPassword: document.getElementById('password').value
+            };
+
+            try {
+                const res = await fetch('http://localhost:5000/api/auth/profile', {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-auth-token': token
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (res.ok) {
+                    // Success
+                    msg.style.display = 'block';
+                    msg.style.backgroundColor = '#ECFDF5';
+                    msg.style.color = '#065F46';
+                    msg.innerText = '✅ Profile updated successfully!';
+                    
+                    // Update local storage name
+                    localStorage.setItem('username', data.username);
+                    
+                    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+                } else {
+                    // Fail
+                    msg.style.display = 'block';
+                    msg.style.backgroundColor = '#FEF2F2';
+                    msg.style.color = '#B91C1C';
+                    msg.innerText = '❌ ' + result.message;
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server Error");
+            }
+        });
+
+        loadProfile();
+    </script>
+</body>
+</html>

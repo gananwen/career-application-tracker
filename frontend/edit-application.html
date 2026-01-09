@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Application - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a> 
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+            
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a> 
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        <div class="user-profile" onclick="logout()">Sign Out</div>
+    </div>
+
+    <div class="main-content">
+        <div class="form-container">
+            <h2>Edit Application</h2>
+            <form id="editAppForm">
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="company" required>
+                </div>
+                <div class="form-group">
+                    <label>Role / Position</label>
+                    <input type="text" id="role" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="status">
+                        <option value="Applied">Applied</option>
+                        <option value="Interview">Interview</option>
+                        <option value="Offer">Offer</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date Applied</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn-save">Update Application</button>
+                <a href="dashboard.html" class="btn-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const appId = urlParams.get('id');
+        const token = localStorage.getItem('token');
+        if (!appId) window.location.href = 'dashboard.html';
+        async function loadData() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/applications/${appId}`, { headers: { 'x-auth-token': token } });
+                const data = await res.json();
+                document.getElementById('company').value = data.company_name;
+                document.getElementById('role').value = data.role;
+                document.getElementById('status').value = data.status;
+                document.getElementById('date').value = new Date(data.date_applied).toISOString().split('T')[0];
+                document.getElementById('notes').value = data.notes || '';
+            } catch (err) { console.error(err); }
+        }
+        document.getElementById('editAppForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                company_name: document.getElementById('company').value,
+                role: document.getElementById('role').value,
+                status: document.getElementById('status').value,
+                date_applied: document.getElementById('date').value,
+                notes: document.getElementById('notes').value
+            };
+            try {
+                const res = await fetch(`http://localhost:5000/api/applications/${appId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+                    body: JSON.stringify(data)
+                });
+                if(res.ok) window.location.href = 'dashboard.html';
+                else alert("Error updating job");
+            } catch (err) { console.error(err); }
+        });
+        loadData();
+    </script>
+</body>
+</html>

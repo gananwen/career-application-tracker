@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Application - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="#" class="active"><i class="fa-solid fa-plus"></i> Add Application</a>
+            
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a>
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a> 
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        <div class="user-profile">
+            <a href="settings.html" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content centered">
+        <div class="form-container">
+            <h2>Add Application</h2>
+            <form id="addAppForm">
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="company" required placeholder="e.g. Google">
+                </div>
+                <div class="form-group">
+                    <label>Role / Position</label>
+                    <input type="text" id="role" required placeholder="e.g. Frontend Intern">
+                </div>
+                
+                <!-- NEW RESUME SELECTOR -->
+                <div class="form-group">
+                    <label>Resume Used</label>
+                    <select id="resumeSelect">
+                        <option value="">No specific resume</option>
+                        <!-- JS will fill this -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="status">
+                        <option value="Applied">Applied</option>
+                        <option value="Interview">Interview</option>
+                        <option value="Offer">Offer</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date Applied</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="notes" rows="4" placeholder="HR Name, Salary Details..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Save Application</button>
+                <a href="dashboard.html" class="btn-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = 'login.html';
+
+        // Load Resumes into Dropdown
+        async function loadResumes() {
+            try {
+                const res = await fetch('http://localhost:5000/api/resumes', {
+                    headers: { 'x-auth-token': token }
+                });
+                const resumes = await res.json();
+                const select = document.getElementById('resumeSelect');
+                
+                resumes.forEach(r => {
+                    const option = document.createElement('option');
+                    option.value = r.id;
+                    option.text = `${r.name} (${r.tag})`;
+                    select.appendChild(option);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('addAppForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                company_name: document.getElementById('company').value,
+                role: document.getElementById('role').value,
+                status: document.getElementById('status').value,
+                date_applied: document.getElementById('date').value,
+                notes: document.getElementById('notes').value,
+                // We would need to update the backend 'addApplication' to accept resume_id
+                // For now we just add it to the request, backend update needed if we want to save it
+                resume_id: document.getElementById('resumeSelect').value || null 
+            };
+
+            try {
+                const res = await fetch('http://localhost:5000/api/applications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+                    body: JSON.stringify(data)
+                });
+                if(res.ok) window.location.href = 'dashboard.html';
+                else alert("Error saving job");
+            } catch (err) { console.error(err); alert("Server Error"); }
+        });
+
+        loadResumes();
+    </script>
+</body>
+</html>

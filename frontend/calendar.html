@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - Career Tracker</title>
+    <!-- Master Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- FullCalendar Library -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    
+    <!-- Tippy.js for Tooltips -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+
+    <style>
+        /* Calendar Specific Overrides for Visualization */
+        .fc-toolbar-title { font-size: 18px !important; font-weight: 700; color: var(--dark); }
+        .fc-button { background-color: var(--dark) !important; border: none !important; font-size: 12px !important; font-weight: 600 !important; }
+        .fc-button-active { background-color: black !important; }
+        .fc-daygrid-day-number { color: var(--text-main); font-size: 12px; font-weight: 600; }
+        .fc-col-header-cell-cushion { color: var(--text-light); font-size: 11px; text-transform: uppercase; font-weight: 700; }
+        
+        /* Status-Based Event Colors */
+        .event-applied { background-color: #DBEAFE; border: none; color: #1E40AF; border-left: 3px solid #3B82F6; }
+        .event-interview { background-color: #FEF3C7; border: none; color: #92400E; border-left: 3px solid #F59E0B; }
+        .event-offer { background-color: #D1FAE5; border: none; color: #065F46; border-left: 3px solid #10B981; }
+        .event-rejected { background-color: #FEE2E2; border: none; color: #991B1B; border-left: 3px solid #EF4444; }
+        
+        .fc-event-title { font-weight: 600; font-size: 11px; padding: 2px; }
+        .fc-event { cursor: pointer; transition: transform 0.1s; }
+        .fc-event:hover { transform: scale(1.02); }
+        
+        /* Layout Wrapper */
+        .calendar-wrapper { background: white; padding: 30px; border-radius: 12px; border: 1px solid var(--border); height: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        
+        .hint-text { font-size: 12px; color: #6B7280; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
+
+        /* Filter Bar Styles */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-item {
+            display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-main);
+            cursor: pointer; user-select: none; background: white; padding: 6px 12px;
+            border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s;
+        }
+        .filter-item:hover { background: #F9FAFB; }
+        .filter-item input { margin: 0; cursor: pointer; accent-color: var(--dark); }
+        
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.applied { background: #3B82F6; }
+        .dot.interview { background: #F59E0B; }
+        .dot.offer { background: #10B981; }
+        .dot.rejected { background: #EF4444; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="#" class="active"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a> 
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a> 
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        
+        <!-- UPDATED SETTINGS LINK -->
+        <div class="user-profile">
+            <a href="settings.html" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Schedule</h1>
+            <div class="header-actions">
+                <button onclick="downloadICS()" class="btn-secondary"><i class="fa-solid fa-download"></i> Sync Calendar</button>
+                <a href="add-application.html" class="btn-add">Add Application</a>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <label class="filter-item"><input type="checkbox" checked value="Applied" onchange="filterEvents()"> <span class="dot applied"></span> Applied</label>
+            <label class="filter-item"><input type="checkbox" checked value="Interview" onchange="filterEvents()"> <span class="dot interview"></span> Interview</label>
+            <label class="filter-item"><input type="checkbox" checked value="Offer" onchange="filterEvents()"> <span class="dot offer"></span> Offer</label>
+            <label class="filter-item"><input type="checkbox" checked value="Rejected" onchange="filterEvents()"> <span class="dot rejected"></span> Rejected</label>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="hint-text">
+                <i class="fa-solid fa-circle-info"></i> Tip: Drag and drop events to change the date. Hover for details.
+            </div>
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = 'login.html';
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+
+        let calendar;
+        let allEvents = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const calendarEl = document.getElementById('calendar');
+            
+            // 1. Fetch Application Data
+            try {
+                const res = await fetch('http://localhost:5000/api/applications', {
+                    headers: { 'x-auth-token': token }
+                });
+                const apps = await res.json();
+
+                // 2. Transform Data for Calendar
+                allEvents = apps.map(app => {
+                    let className = 'event-applied';
+                    if (app.status === 'Interview') className = 'event-interview';
+                    if (app.status === 'Offer') className = 'event-offer';
+                    if (app.status === 'Rejected') className = 'event-rejected';
+
+                    return {
+                        id: app.id, // Important for updates
+                        title: `${app.company_name} (${app.status})`,
+                        start: app.date_applied,
+                        className: className,
+                        // Store full app data for drag-and-drop updates
+                        extendedProps: {
+                            role: app.role,
+                            notes: app.notes,
+                            company: app.company_name,
+                            status: app.status
+                        }
+                    };
+                });
+
+            } catch (err) { console.error(err); }
+
+            // 3. Initialize Calendar
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listWeek'
+                },
+                events: allEvents,
+                height: '100%',
+                contentHeight: 'auto',
+                aspectRatio: 1.8,
+                editable: true, // ENABLE DRAG & DROP
+                droppable: true,
+                
+                // --- EVENT CLICK (Edit Page) ---
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    window.location.href = `edit-application.html?id=${info.event.id}`;
+                },
+
+                // --- HOVER TOOLTIP (Tippy.js) ---
+                eventDidMount: function(info) {
+                    const props = info.event.extendedProps;
+                    const tooltipContent = `
+                        <div style="text-align:left;">
+                            <strong>${props.role}</strong><br>
+                            <span style="color:#cbd5e1; font-size:11px;">${props.company}</span>
+                            ${props.notes ? `<br><div style="margin-top:4px; border-top:1px solid #475569; padding-top:4px; font-style:italic;">${props.notes}</div>` : ''}
+                        </div>
+                    `;
+                    
+                    tippy(info.el, {
+                        content: tooltipContent,
+                        allowHTML: true,
+                        theme: 'light',
+                        placement: 'top',
+                    });
+                },
+
+                // --- DRAG & DROP LOGIC ---
+                eventDrop: async function(info) {
+                    const newDate = info.event.startStr;
+                    const props = info.event.extendedProps;
+                    const id = info.event.id;
+
+                    if (!confirm(`Move ${props.company} application to ${newDate}?`)) {
+                        info.revert(); // Undo move if user cancels
+                        return;
+                    }
+
+                    try {
+                        const updatedData = {
+                            company_name: props.company,
+                            role: props.role,
+                            status: props.status,
+                            date_applied: newDate, // The changed field
+                            notes: props.notes || ""
+                        };
+
+                        const res = await fetch(`http://localhost:5000/api/applications/${id}`, {
+                            method: 'PUT',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'x-auth-token': token
+                            },
+                            body: JSON.stringify(updatedData)
+                        });
+
+                        if (!res.ok) {
+                            throw new Error('Update failed');
+                        }
+                        // Refresh local event data so filtering works after drop
+                        const eventIndex = allEvents.findIndex(e => e.id === parseInt(id));
+                        if(eventIndex > -1) {
+                            allEvents[eventIndex].start = newDate;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert("Failed to update date. Check server.");
+                        info.revert();
+                    }
+                }
+            });
+            calendar.render();
+        });
+
+        // Filter Logic
+        function filterEvents() {
+            const checkboxes = document.querySelectorAll('.filter-item input[type="checkbox"]');
+            const checkedValues = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+            
+            const filteredEvents = allEvents.filter(event => 
+                checkedValues.includes(event.extendedProps.status)
+            );
+            
+            calendar.removeAllEvents();
+            calendar.addEventSource(filteredEvents);
+        }
+
+        // Export ICS Logic
+        function downloadICS() {
+            if (allEvents.length === 0) return alert("No events to export.");
+            
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//CareerTracker//EN\n";
+            
+            allEvents.forEach(event => {
+                const start = event.start.replace(/-/g, ''); // Format YYYYMMDD
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `SUMMARY:${event.extendedProps.company} (${event.extendedProps.status})\n`;
+                icsContent += `DTSTART;VALUE=DATE:${start}\n`;
+                icsContent += `DTEND;VALUE=DATE:${start}\n`;
+                icsContent += `DESCRIPTION:Role: ${event.extendedProps.role}\\nNotes: ${event.extendedProps.notes || 'None'}\n`;
+                icsContent += "END:VEVENT\n";
+            });
+            
+            icsContent += "END:VCALENDAR";
+            
+            const blob = new Blob([icsContent], { type: 'text/calendar' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'career_schedule.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>

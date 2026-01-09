@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Architect - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a>
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+            
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="#" class="active"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="interview-prep.html"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+        <div class="user-profile"><a href="settings.html" style="color:inherit;text-decoration:none;"><i class="fa-solid fa-gear"></i> Settings</a></div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="header-section">
+                <h1>Email Architect</h1>
+                <p>Generate professional follow-ups and outreach messages instantly.</p>
+            </div>
+
+            <div class="tool-grid">
+                <!-- INPUTS CARD -->
+                <div class="tool-card">
+                    <div class="card-header"><i class="fa-solid fa-sliders"></i> Email Settings</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Email Type</label>
+                            <select id="templateType" onchange="generateEmail()">
+                                <option value="followUp">Follow Up (No Response)</option>
+                                <option value="thankYou">Thank You (Post-Interview)</option>
+                                <option value="cold">Cold Outreach (Recruiter)</option>
+                                <option value="accept">Accept Offer</option>
+                                <option value="withdraw">Withdraw Application</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tone</label>
+                            <select id="tone" onchange="generateEmail()">
+                                <option value="professional">Professional (Safe)</option>
+                                <option value="casual">Casual (Modern Startup)</option>
+                                <option value="enthusiastic">Enthusiastic (Eager)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Recruiter Name</label>
+                            <input type="text" id="recruiterName" placeholder="e.g. Sarah" oninput="generateEmail()">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" id="company" placeholder="e.g. Google" oninput="generateEmail()">
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input type="text" id="role" placeholder="e.g. Frontend Intern" oninput="generateEmail()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OUTPUT CARD -->
+                <div class="tool-card">
+                    <div class="card-header"><i class="fa-solid fa-pen-to-square"></i> Preview & Edit</div>
+                    <div class="card-body">
+                        <div class="result-box">
+                            <span class="result-label">Subject Line</span>
+                            <input type="text" id="subjectOutput" class="output-input">
+                            <span class="result-label">Body</span>
+                            <textarea id="bodyOutput" class="output-textarea"></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-mail" onclick="openInMail()"><i class="fa-regular fa-envelope"></i> Open Mail</button>
+                            <button class="btn-copy" onclick="copyToClipboard()"><i class="fa-regular fa-copy"></i> Copy Text</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+        const contentBase = {
+            followUp: "I recently applied for the {role} position at {company} and wanted to briefly follow up on my application. I am very interested in this opportunity and confident that my skills would be a great fit for your team.\n\nPlease let me know if there is any additional information I can provide.",
+            thankYou: "Thank you so much for taking the time to speak with me today about the {role} position at {company}. It was great learning more about the team and your vision.\n\nI am even more excited about the possibility of joining {company} after our conversation.",
+            cold: "I've been following {company}'s work for a while and am very impressed by your recent projects.\n\nI am writing to express my interest in the {role} position. With my background in software development, I believe I could bring value to your engineering team.\n\nWould you be open to a brief chat next week?",
+            accept: "I am delighted to accept your offer for the {role} position at {company}!\n\nI am really looking forward to joining the team. Please let me know what the next steps are regarding the onboarding process.",
+            withdraw: "Thank you for considering me for the {role} position at {company}.\n\nHowever, I have decided to accept another offer that aligns closely with my current career goals, and would like to withdraw my application.\n\nI appreciate your time and hope we can stay connected."
+        };
+        const toneModifiers = { professional: { greeting: "Dear {name},", signoff: "Sincerely," }, casual: { greeting: "Hi {name},", signoff: "Best," }, enthusiastic: { greeting: "Hello {name}!", signoff: "Cheers," } };
+        const subjects = { followUp: "Following up on my application for {role}", thankYou: "Thank you - {role} Interview", cold: "Inquiry regarding {role} at {company}", accept: "Accepting Offer - {role}", withdraw: "Withdrawing application for {role}" };
+        
+        function generateEmail() {
+            const type = document.getElementById('templateType').value;
+            const tone = document.getElementById('tone').value;
+            const name = document.getElementById('recruiterName').value || "[Name]";
+            const company = document.getElementById('company').value || "[Company]";
+            const role = document.getElementById('role').value || "[Role]";
+            let subject = subjects[type].replace(/{name}/g, name).replace(/{company}/g, company).replace(/{role}/g, role);
+            const greeting = toneModifiers[tone].greeting.replace(/{name}/g, name);
+            const signoff = toneModifiers[tone].signoff;
+            let bodyContent = contentBase[type].replace(/{name}/g, name).replace(/{company}/g, company).replace(/{role}/g, role);
+            let finalBody = `${greeting}\n\n${bodyContent}\n\n${signoff}`;
+            document.getElementById('subjectOutput').value = subject;
+            document.getElementById('bodyOutput').value = finalBody;
+        }
+        
+        // --- NEW: AUTO-FILL FROM URL ---
+        function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const companyParam = urlParams.get('company');
+            const roleParam = urlParams.get('role');
+            const typeParam = urlParams.get('type');
+
+            if(companyParam) document.getElementById('company').value = companyParam;
+            if(roleParam) document.getElementById('role').value = roleParam;
+            if(typeParam) document.getElementById('templateType').value = typeParam;
+
+            generateEmail();
+        }
+
+        function copyToClipboard() {
+            const fullText = `Subject: ${document.getElementById('subjectOutput').value}\n\n${document.getElementById('bodyOutput').value}`;
+            navigator.clipboard.writeText(fullText).then(() => { const btn = document.querySelector('.btn-copy'); const originalText = btn.innerHTML; btn.innerHTML = "<i class='fa-solid fa-check'></i> Copied!"; setTimeout(() => btn.innerHTML = originalText, 2000); });
+        }
+        function openInMail() { const subject = encodeURIComponent(document.getElementById('subjectOutput').value); const body = encodeURIComponent(document.getElementById('bodyOutput').value); window.location.href = `mailto:?subject=${subject}&body=${body}`; }
+        
+        init();
+    </script>
+</body>
+</html>

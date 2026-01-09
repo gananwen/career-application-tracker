@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Prep - Career Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Career<span>Up</span></div>
+        <div class="menu">
+            <a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="calendar.html"><i class="fa-solid fa-calendar"></i> Calendar</a>
+            <a href="kanban.html"><i class="fa-solid fa-list-check"></i> Kanban Board</a>
+            <a href="add-application.html"><i class="fa-solid fa-plus"></i> Add Application</a>
+            <a href="networking.html"><i class="fa-solid fa-address-book"></i> Networking</a>
+            <a href="resume-manager.html"><i class="fa-solid fa-file-pdf"></i> Resumes</a>
+
+            <div class="menu-label">Career Toolkit</div>
+            <a href="offer-comparator.html"><i class="fa-solid fa-scale-balanced"></i> Offer Comparator</a>
+            <a href="email-generator.html"><i class="fa-solid fa-envelope-open-text"></i> Email Architect</a>
+            <a href="keyword-scanner.html"><i class="fa-solid fa-file-contract"></i> ATS Scanner</a>
+            <a href="#" class="active"><i class="fa-solid fa-microphone-lines"></i> Interview Prep</a>
+        </div>
+
+        <div class="user-profile">
+            <a href="settings.html"
+                style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-gear"></i> Settings</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content centered">
+        <div class="prep-container">
+            <div class="header-section">
+                <h1>Interview Simulator</h1>
+                <p>Practice answering random questions under time pressure.</p>
+            </div>
+
+            <div class="flashcard" id="card">
+                <span class="category-badge" id="category">Behavioral</span>
+                <div class="question-text" id="question">Click "Next Question" to start</div>
+            </div>
+
+            <div class="timer-display" id="timer">00:00</div>
+
+            <div class="controls">
+                <button class="btn btn-start" id="btnStart" onclick="startTimer()"><i class="fa-solid fa-play"></i>
+                    Start Recording</button>
+                <button class="btn btn-stop" id="btnStop" onclick="stopTimer()"><i class="fa-solid fa-stop"></i>
+                    Stop</button>
+                <button class="btn btn-next" onclick="nextQuestion()"><i class="fa-solid fa-shuffle"></i> Next
+                    Question</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+        const questions = [
+            { type: "Behavioral", text: "Tell me about yourself." },
+            { type: "Behavioral", text: "What is your greatest weakness?" },
+            { type: "Behavioral", text: "Describe a time you failed and how you handled it." },
+            { type: "Behavioral", text: "Why do you want to work for this company?" },
+            { type: "Technical", text: "Explain the difference between REST and GraphQL." },
+            { type: "Technical", text: "What is the Virtual DOM in React?" },
+            { type: "Technical", text: "Explain Database Normalization." },
+            { type: "Technical", text: "How do you handle authentication in a web app?" },
+            { type: "Situational", text: "How would you handle a disagreement with a coworker?" },
+            { type: "Situational", text: "You have a deadline you can't meet. What do you do?" }
+        ];
+        let timerInterval; let seconds = 0; let isRunning = false;
+        function nextQuestion() {
+            const random = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById('question').innerText = random.text;
+            document.getElementById('category').innerText = random.type;
+            stopTimer(); resetTimer();
+        }
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            document.getElementById('btnStart').style.display = 'none';
+            document.getElementById('btnStop').style.display = 'flex';
+            timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
+        }
+        function stopTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('btnStart').style.display = 'flex';
+            document.getElementById('btnStop').style.display = 'none';
+        }
+        function resetTimer() { seconds = 0; updateTimerDisplay(); }
+        function updateTimerDisplay() {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${mins}:${secs}`;
+        }
+    </script>
+</body>
+
+</html>
